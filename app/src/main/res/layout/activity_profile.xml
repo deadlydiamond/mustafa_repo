@@ -37,7 +37,7 @@
         android:fontFamily="@font/montserrat"
         android:text="We are delighted to have you, your profile is 100% completed. Within 60-90 hours  your profile will be verified and will be visible to public"
         android:textColor="@color/colorPrimaryDark"
-        android:textSize="12sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

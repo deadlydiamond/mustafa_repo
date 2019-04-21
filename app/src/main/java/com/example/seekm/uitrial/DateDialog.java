@@ -11,43 +11,32 @@ import android.widget.EditText;
 
 import java.util.Calendar;
 
-
 @SuppressLint("ValidFragment")
 public class DateDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
-
     EditText txtData;
 
-    public DateDialog(View view){
+    public DateDialog(View view) {
 
-
-        txtData=(EditText)view;
+        txtData = (EditText) view;
     }
 
-    public Dialog onCreateDialog(Bundle savedInstanceState){
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        final Calendar c=Calendar.getInstance();
+        final Calendar c = Calendar.getInstance();
 
-        c.set(1997,6,6);
+        c.set(1997, 6, 6);
 
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
 
-
-        int year=c.get(Calendar.YEAR);
-        int month=c.get(Calendar.MONTH);
-        int day=c.get(Calendar.DAY_OF_MONTH);
-
-
-
-
-        return new DatePickerDialog(getActivity(),this,year,month,day);
-
+        return new DatePickerDialog(getActivity(), this, year, month, day);
     }
 
-    public void onDateSet(DatePicker view , int year , int month , int day){
+    public void onDateSet(DatePicker view, int year, int month, int day) {
 
-
-        String date=day+"-"+(month+1)+"-"+year;
+        String date = day + "-" + (month + 1) + "-" + year;
         txtData.setText(date);
     }
-
 }

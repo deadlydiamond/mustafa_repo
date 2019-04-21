@@ -3,19 +3,17 @@ package com.example.seekm.uitrial;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Handler;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
@@ -34,78 +32,49 @@ import java.util.regex.Pattern;
 
 public class NextActivity extends AppCompatActivity implements View.OnClickListener {
 
-
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+    private static final int CHOOSE_IMAGE = 101;
+    public int Next_Activity = 0;
     ProgressBar p1;
     FloatingActionButton signup_float;
-
-    int Image_upload_checker=0;
-
-    SharedPreferences Profile_preferences ;
-
-    public int Next_Activity=0;
-
+    int Image_upload_checker = 0;
+    SharedPreferences Profile_preferences;
     EditText First_name;
     EditText Last_name;
-
     EditText Email;
-
     EditText signup_password;
     EditText Confirm_password;
-
     EditText DateOfBirth;
-
     RadioGroup radioGroup_gender;
-
     RadioButton radioButton_male;
     RadioButton radioButton_female;
-
     RadioButton gender_1;
-
     ImageView signup_profile_image;
-    String ProfileImageUrl=null;
-    String ProfileUrl=null;
+    String ProfileImageUrl = null;
+    String ProfileUrl = null;
     Uri uriProfileImage;
-
     String first_name = "";
     String last_name = "";
-
     String email = "";
-
     String dateOfBirth = null;
-
     String user_password = "";
     String confirm_password = "";
-
-    String Gender="";
-
-    private static final int CHOOSE_IMAGE = 101;
-
+    String Gender = "";
     StorageReference profileImageRef;
-
-
-
-
-    public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_next);
 
-        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser() ;
+        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         Toast.makeText(this, "" + currentFirebaseUser.getUid(), Toast.LENGTH_SHORT).show();
 
-
-        p1=findViewById(R.id.next_progres_bar);
+        p1 = findViewById(R.id.next_progres_bar);
         First_name = findViewById(R.id.edit_text_first_name);
-
-
-
 
         Last_name = findViewById(R.id.edit_text_last_name);
 
         Email = findViewById(R.id.edit_text_email);
-
 
         signup_password = findViewById(R.id.edit_text_pwd);
 
@@ -123,10 +92,9 @@ public class NextActivity extends AppCompatActivity implements View.OnClickListe
 
         signup_float.setOnClickListener(this);
 
-        signup_profile_image=findViewById(R.id.sign_up_image_button);
+        signup_profile_image = findViewById(R.id.sign_up_image_button);
 
         signup_profile_image.setOnClickListener(this);
-
 
         DateOfBirth.setShowSoftInputOnFocus(false);
 
@@ -134,14 +102,10 @@ public class NextActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
 
-
                 DateDialog dialog = new DateDialog((v));
-
 
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 dialog.show(ft, "DatePicker");
-
-
             }
         });
 
@@ -163,19 +127,12 @@ public class NextActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-
-
-
 //        SharedPreferences signup_data
     }
 
-
     public void onStart() {
         super.onStart();
-
-
     }
-
 
     @Override
     public void onClick(View v) {
@@ -190,26 +147,25 @@ public class NextActivity extends AppCompatActivity implements View.OnClickListe
 
                 showImageChooser();
                 break;
-
         }
     }
 
     private void showImageChooser() {
 
-        Intent  intent = new Intent();
+        Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent,"Select Profile Image"),CHOOSE_IMAGE);
+        startActivityForResult(Intent.createChooser(intent, "Select Profile Image"), CHOOSE_IMAGE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode==CHOOSE_IMAGE && resultCode == RESULT_OK && data!=null && data.getData()!=null){
+        if (requestCode == CHOOSE_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
 
-            Image_upload_checker=1;
-            uriProfileImage  = data.getData();
+            Image_upload_checker = 1;
+            uriProfileImage = data.getData();
             signup_profile_image.setImageDrawable(null);
             signup_profile_image.setBackgroundResource(0);
             signup_profile_image.setImageURI(uriProfileImage);
@@ -218,7 +174,6 @@ public class NextActivity extends AppCompatActivity implements View.OnClickListe
 
     private void TakeUserData() {
 
-
         first_name = First_name.getText().toString();
         last_name = Last_name.getText().toString();
         email = Email.getText().toString();
@@ -226,67 +181,45 @@ public class NextActivity extends AppCompatActivity implements View.OnClickListe
         confirm_password = Confirm_password.getText().toString();
         dateOfBirth = DateOfBirth.getText().toString();
 
-        int selectId =radioGroup_gender.getCheckedRadioButtonId();
+        int selectId = radioGroup_gender.getCheckedRadioButtonId();
 
-        gender_1=findViewById(selectId);
+        gender_1 = findViewById(selectId);
 
         Gender = gender_1.getText().toString();
 
+        Next_Activity += validateName(first_name, First_name, "First Name");
+        Next_Activity += validateName(last_name, Last_name, "Last Name");
 
-        Next_Activity+= validateName(first_name, First_name,"First Name");
-        Next_Activity+= validateName(last_name, Last_name,"Last Name");
+        Next_Activity += validateEmail(email, Email);
 
-        Next_Activity+= validateEmail(email,Email);
+        Next_Activity += validatePassword(user_password, signup_password, confirm_password, Confirm_password);
 
-        Next_Activity+= validatePassword(user_password,signup_password,confirm_password,Confirm_password);
+        Next_Activity += validateDateOfbirth(dateOfBirth, DateOfBirth);
 
-        Next_Activity+= validateDateOfbirth(dateOfBirth,DateOfBirth);
+        if (Next_Activity == 5) {
 
-        if(Next_Activity==5){
+            p1.setVisibility(View.VISIBLE);
 
+            Profile_preferences = getApplicationContext().getSharedPreferences("Profile_Preferecens", 0);
 
-        p1.setVisibility(View.VISIBLE);
-            
-
-
-            Profile_preferences = getApplicationContext().getSharedPreferences("Profile_Preferecens",0);
-
-
-            if(Image_upload_checker==1){
+            if (Image_upload_checker == 1) {
 
                 uploadImageToFirebase();
-
-
-            }
-            else
-            {
+            } else {
 
                 dothisNow();
             }
+        } else {
 
-
-
-
-
-
+            Next_Activity = 0;
         }
-
-        else {
-
-            Next_Activity=0;
-        }
-
-
     }
 
     private void uploadImageToFirebase() {
 
+        profileImageRef = FirebaseStorage.getInstance().getReference().child("ProfilePicture/" + System.currentTimeMillis() + ".jpg");
 
-
-        profileImageRef=FirebaseStorage.getInstance().getReference().child("ProfilePicture/"+System.currentTimeMillis()+".jpg");
-
-        if(uriProfileImage!=null){
-
+        if (uriProfileImage != null) {
 
             profileImageRef.putFile(uriProfileImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -295,11 +228,10 @@ public class NextActivity extends AppCompatActivity implements View.OnClickListe
                     profileImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            ProfileImageUrl=uri.toString();
-                            ProfileUrl=ProfileImageUrl;
+                            ProfileImageUrl = uri.toString();
+                            ProfileUrl = ProfileImageUrl;
 
                             dothisNow();
-
                         }
                     });
                 }
@@ -310,8 +242,6 @@ public class NextActivity extends AppCompatActivity implements View.OnClickListe
                 }
             });
         }
-
-        
     }
 
     private void dothisNow() {
@@ -320,34 +250,30 @@ public class NextActivity extends AppCompatActivity implements View.OnClickListe
 //            @Override
 //            public void run() {
 
+        SharedPreferences.Editor editor = Profile_preferences.edit();
+        editor.putString("First_Name", first_name);
+        editor.putString("Last_Name", last_name);
+        editor.putString("Email", email);
+        editor.putString("Password", user_password);
+        editor.putString("Date_Of_Birth", dateOfBirth);
+        editor.putString("Gender", Gender);
+        editor.putString("Profile_Image_Url", ProfileUrl);
+        editor.apply();
+        p1.setVisibility(View.GONE);
 
-                SharedPreferences.Editor editor = Profile_preferences.edit();
-                editor.putString("First_Name",first_name);
-                editor.putString("Last_Name",last_name);
-                editor.putString("Email",email);
-                editor.putString("Password",user_password);
-                editor.putString("Date_Of_Birth",dateOfBirth);
-                editor.putString("Gender",Gender);
-                editor.putString("Profile_Image_Url",ProfileUrl);
-                editor.apply();
-                p1.setVisibility(View.GONE);
-
-
-                GoToProfileBuilder();
+        GoToProfileBuilder();
 //            }
 //        }, 10000);
     }
 
     private void GoToProfileBuilder() {
 
-        startActivity(new Intent(NextActivity.this,ProfileBuilder.class));
+        startActivity(new Intent(NextActivity.this, ProfileBuilder.class));
     }
 
     private int validateDateOfbirth(String dateOfBirth, EditText dateOfBirth1) {
 
-
-
-        if(dateOfBirth.length()==0){
+        if (dateOfBirth.length() == 0) {
 
             dateOfBirth1.setError("Date Of Birth is required");
             dateOfBirth1.requestFocus();
@@ -356,22 +282,19 @@ public class NextActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         return 1;
-
     }
 
     private int validatePassword(String user_password, EditText signup_password, String confirm_password, EditText confirm_password1) {
 
-
-        if(!user_password.matches("^(?:(?=.*[a-z])(?:(?=.*[A-Z])(?=.*[\\d\\W])|(?=.*\\W)(?=.*\\d))|(?=.*\\W)(?=.*[A-Z])(?=.*\\d)).{8,}$")){
+        if (!user_password.matches("^(?:(?=.*[a-z])(?:(?=.*[A-Z])(?=.*[\\d\\W])|(?=.*\\W)(?=.*\\d))|(?=.*\\W)(?=.*[A-Z])(?=.*\\d)).{8,}$")) {
 
             signup_password.setError("Password must contain A Capital letter , A number ");
             signup_password.requestFocus();
 
             return 0;
-
         }
 
-        if(user_password.length()==0){
+        if (user_password.length() == 0) {
 
             signup_password.setError("Password is required");
             signup_password.requestFocus();
@@ -379,8 +302,7 @@ public class NextActivity extends AppCompatActivity implements View.OnClickListe
             return 0;
         }
 
-
-        if(confirm_password.length()==0){
+        if (confirm_password.length() == 0) {
 
             confirm_password1.setError("Enter password here too");
             confirm_password1.requestFocus();
@@ -388,7 +310,7 @@ public class NextActivity extends AppCompatActivity implements View.OnClickListe
             return 0;
         }
 
-        if(!confirm_password.equals(user_password)){
+        if (!confirm_password.equals(user_password)) {
 
             signup_password.setError("Both Passwords must match");
             signup_password.requestFocus();
@@ -399,43 +321,36 @@ public class NextActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         return 1;
-
     }
 
     private int validateEmail(String email, EditText email1) {
 
-        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
 
             email1.setError("Enter Valid Email");
             email1.requestFocus();
 
             return 0;
-
         }
 
-        if(email.length() == 0){
+        if (email.length() == 0) {
 
             email1.setError("Email can not be empty");
 
             return 0;
-
         }
 
         return 1;
-
     }
 
-    private int  validateName(String AnyName, EditText AnyEditText , String Datatypes) {
+    private int validateName(String AnyName, EditText AnyEditText, String Datatypes) {
 
-        if (!AnyName.matches("^[A-Za-z\\s]{1,}[\\.]{0,1}[A-Za-z\\s]{0,}$") || AnyName.length()< 2) {
+        if (!AnyName.matches("^[A-Za-z\\s]{1,}[\\.]{0,1}[A-Za-z\\s]{0,}$") || AnyName.length() < 2) {
 
             AnyEditText.setError("Please Enter Valid Name");
             AnyEditText.requestFocus();
 
             return 0;
-
-
-
         }
 
         if (AnyName.length() == 0) {
@@ -444,13 +359,8 @@ public class NextActivity extends AppCompatActivity implements View.OnClickListe
             AnyEditText.requestFocus();
 
             return 0;
-
         }
 
         return 1;
-
     }
-
-
-
 }

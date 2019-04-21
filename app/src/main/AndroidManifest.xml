@@ -18,7 +18,6 @@
         android:roundIcon="@drawable/logoblue"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".chat_user_main"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -65,8 +64,9 @@
         <activity android:name=".Trouble_Verification" />
         <activity android:name=".SigninPasswordActivity" />
         <activity android:name=".UserForgotPassword" />
-        <activity android:name=".ProfileBuilder" />
-        <activity android:name=".MapsActivity" />
+        <!--<activity android:name=".ProfileBuilder" />-->
+        <!--<activity android:name=".MapsActivity" />-->
+        <activity android:name=".OnBoarding_1" />
 
         <meta-data
             android:name="com.google.android.gms.version"

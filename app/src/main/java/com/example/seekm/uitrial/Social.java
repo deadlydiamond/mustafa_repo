@@ -27,7 +27,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,19 +39,15 @@ public class Social extends AppCompatActivity implements
         View.OnClickListener {
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
-
+    public int flag = 0;
+    CallbackManager callbackManager;
+    LoginButton loginButton;
+    // [END declare_auth]
     // [START declare_auth]
     private FirebaseAuth mAuth;
-    CallbackManager callbackManager;
-    public int flag = 0;
-    // [END declare_auth]
-
     private GoogleSignInClient mGoogleSignInClient;
     private TextView mStatusTextView;
     private TextView mDetailTextView;
-
-    LoginButton loginButton;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +77,7 @@ public class Social extends AppCompatActivity implements
         mAuth = FirebaseAuth.getInstance();
         callbackManager = CallbackManager.Factory.create();
 
-        loginButton = (LoginButton)findViewById(R.id.login_button);
+        loginButton = findViewById(R.id.login_button);
         loginButton.setReadPermissions("email");
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,15 +115,14 @@ public class Social extends AppCompatActivity implements
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(Social.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
-                        Log.e("ERROR_EDMT",""+e.getMessage());
-                        
+                        Toast.makeText(Social.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.e("ERROR_EDMT", "" + e.getMessage());
                     }
                 }).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
             public void onSuccess(AuthResult authResult) {
                 String email23 = authResult.getUser().getEmail();
-                Toast.makeText(Social.this,"You are signed in with this email : "+email23,Toast.LENGTH_SHORT).show();
+                Toast.makeText(Social.this, "You are signed in with this email : " + email23, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -148,8 +142,7 @@ public class Social extends AppCompatActivity implements
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-
-        if (flag == 0){
+        if (flag == 0) {
 
             // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
             if (requestCode == RC_SIGN_IN) {
@@ -166,12 +159,9 @@ public class Social extends AppCompatActivity implements
                     // [END_EXCLUDE]
                 }
             }
+        } else {
 
-    }
-
-    else{
-
-            callbackManager.onActivityResult(requestCode,resultCode,data);
+            callbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
     // [END onactivityresult]
